@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "aiombus"
+version = "0.1.0"
+description = "A pure Python async implementation of the Meter-Bus (M-Bus EN13757-3) protocol."
+authors = ["Stanley Kudrow <stankudrow@reply.no>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+
+
+[tool.poetry.group.lint.dependencies]
+mypy = "^1.11.2"
+ruff = "^0.6.4"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.2"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^5.0.0"
+pytest-mock = "^3.14.0"
+pytest-random-order = "^1.1.1"
+pytest-xdist = "^3.6.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
