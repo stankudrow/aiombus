@@ -23,6 +23,32 @@ pytest-mock = "^3.14.0"
 pytest-random-order = "^1.1.1"
 pytest-xdist = "^3.6.1"
 
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.paths]
+source = ["aiombus"]
+
+[tool.coverage.report]
+fail_under = 90
+precision = 0
+skip_covered = true
+skip_empty = true
+show_missing = true
+
+[tool.coverage.html]
+skip_empty = true
+title = "Async Meter-Bus Coverage Report"
+
+
+[tool.pytest.ini_options]
+minversion = "7.4"
+addopts = "-s -vvv --cov=aiombus --cov-report html --random-order"
+testpaths = [
+    "tests",
+]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
