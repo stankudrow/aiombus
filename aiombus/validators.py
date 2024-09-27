@@ -4,14 +4,14 @@ from aiombus.exceptions import MBusValidationError
 
 
 def validate_byte(nbr: int) -> int:
-    """Validate the `nbr` to be a valid `bytes` value.
+    """Validate an integer number to be a valid `bytes` type.
 
-    In Python, bytest must be in range(0, 256).
-    This is the range for 8 bit unsigned integer.
+    In Python, a byte must be in range(0, 256).
+    This is the range for 8-bit unsigned integer.
 
     Raises
     ------
-    MbusDataError: the value is out of [0, 255] segment.
+    MbusValidationError: the value is out of the [0, 255] segment.
 
     Returns
     -------

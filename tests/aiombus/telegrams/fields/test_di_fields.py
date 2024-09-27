@@ -3,7 +3,7 @@ from typing import ContextManager
 
 import pytest
 
-from aiombus.blocks import (
+from aiombus.telegrams.fields import (
     DataInformationField as DIF,
     DataInformationFieldExtension as DIFE,
 )
@@ -14,18 +14,24 @@ from aiombus.exceptions import MBusValidationError
 
 
 @pytest.mark.parametrize(
-    ("byte", "check_byte", "expectation"),
+    ("byte", "expectation"),
     [
-        (-1, True, pytest.raises(MBusValidationError)),
-        (-1, False, does_not_raise()),
-        (0, True, does_not_raise()),
-        (255, True, does_not_raise()),
-        (256, True, pytest.raises(MBusValidationError)),
+        (-1, pytest.raises(MBusValidationError)),
+        (0, does_not_raise()),
+        (255, does_not_raise()),
+        (256, pytest.raises(MBusValidationError)),
     ],
 )
-def test_dif_init(byte: int, check_byte: bool, expectation: ContextManager):
+def test_dif_init(byte: int, expectation: ContextManager):
     with expectation:
-        DIF(byte=byte, check_byte=check_byte)
+        DIF(byte=byte)
+
+
+def test_dif_repr():
+    byte = 0xFF
+
+    dif = DIF(byte)
+    assert repr(dif) == f"DataInformationField(byte={byte})"
 
 
 @pytest.mark.parametrize(
@@ -66,7 +72,7 @@ def test_dif_storage_number_lsb(byte: int, sn_lsb: int):
 def test_dif_function_field(byte: int, function_field: int):
     dif = DIF(byte=byte)
 
-    assert dif.function_field == function_field
+    assert dif.function == function_field
 
 
 @pytest.mark.parametrize(
@@ -81,25 +87,31 @@ def test_dif_function_field(byte: int, function_field: int):
 def test_dif_data_field(byte: int, data_field: int):
     dif = DIF(byte=byte)
 
-    assert dif.data_field == data_field
+    assert dif.data == data_field
 
 
 ### the DIFE section
 
 
 @pytest.mark.parametrize(
-    ("byte", "check_byte", "expectation"),
+    ("byte", "expectation"),
     [
-        (-1, True, pytest.raises(MBusValidationError)),
-        (-1, False, does_not_raise()),
-        (0, True, does_not_raise()),
-        (255, True, does_not_raise()),
-        (256, True, pytest.raises(MBusValidationError)),
+        (-1, pytest.raises(MBusValidationError)),
+        (0, does_not_raise()),
+        (255, does_not_raise()),
+        (256, pytest.raises(MBusValidationError)),
     ],
 )
-def test_dife_init(byte: int, check_byte: bool, expectation: ContextManager):
+def test_dife_init(byte: int, expectation: ContextManager):
     with expectation:
-        DIFE(byte=byte, check_byte=check_byte)
+        DIFE(byte=byte)
+
+
+def test_dife_repr():
+    byte = 0xFF
+
+    dif = DIFE(byte)
+    assert repr(dif) == f"DataInformationFieldExtension(byte={byte})"
 
 
 @pytest.mark.parametrize(

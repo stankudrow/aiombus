@@ -26,7 +26,9 @@ from aiombus.telegrams.fields import (
 )
 def test_address_field_init(byte: int, expectation: ContextManager):
     with expectation:
-        AddressField(byte)
+        field = AddressField(byte)
+
+        assert field.byte == byte
 
 
 def test_is_unconfigured_slave():

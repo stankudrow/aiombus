@@ -6,7 +6,7 @@ import pytest
 from aiombus.telegrams.frames import (
     ACK_BYTE,
     SHORT_FRAME_START_BYTE,
-    SHORT_FRAME_STOP_BYTE,
+    FRAME_STOP_BYTE,
     SingleFrame,
     ShortFrame,
 )
@@ -26,28 +26,23 @@ def test_single_frame_init(byte: int, expectation: ContextManager):
 
 
 @pytest.mark.parametrize(
-    ("data", "check_length", "expectation"),
+    ("data", "expectation"),
     [
-        ([1], False, pytest.raises(MBusDecodeError)),
+        ([1], pytest.raises(MBusDecodeError)),
         (
-            [SHORT_FRAME_START_BYTE, 2, 3, 4, SHORT_FRAME_STOP_BYTE],
-            True,
+            [SHORT_FRAME_START_BYTE, 2, 3, 4, FRAME_STOP_BYTE],
             does_not_raise(),
         ),
         (
-            [SHORT_FRAME_START_BYTE, 2, 3, 4, 6, SHORT_FRAME_STOP_BYTE],
-            True,
+            [SHORT_FRAME_START_BYTE, 2, 3, 4, 6, FRAME_STOP_BYTE],
             pytest.raises(MBusDecodeError),
         ),
         (
-            [SHORT_FRAME_START_BYTE, 2, 3, 4, 6, SHORT_FRAME_STOP_BYTE],
-            False,
+            [SHORT_FRAME_START_BYTE, 2, 3, FRAME_STOP_BYTE],
             pytest.raises(MBusDecodeError),
         ),
     ],
 )
-def test_short_frame_init(
-    data: Iterable, check_length: bool, expectation: ContextManager
-):
+def test_short_frame_init(data: Iterable, expectation: ContextManager):
     with expectation:
-        ShortFrame(data, strict_length=check_length)
+        ShortFrame(data)
