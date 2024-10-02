@@ -3,7 +3,7 @@ from typing import ContextManager
 
 import pytest
 
-from aiombus.exceptions import MBusValidationError
+from aiombus.exceptions import MBusError
 from aiombus.telegrams.fields import (
     AddressField,
     AF_UNCONFIGURED_SLAVE_BYTE,
@@ -18,10 +18,10 @@ from aiombus.telegrams.fields import (
 @pytest.mark.parametrize(
     ("byte", "expectation"),
     [
-        (-1, pytest.raises(MBusValidationError)),
+        (-1, pytest.raises(MBusError)),
         (0, does_not_raise()),
         (255, does_not_raise()),
-        (256, pytest.raises(MBusValidationError)),
+        (256, pytest.raises(MBusError)),
     ],
 )
 def test_address_field_init(byte: int, expectation: ContextManager):

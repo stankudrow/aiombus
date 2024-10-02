@@ -1,7 +1,158 @@
-"""The Meter-Bus types."""
+"""The Meter-Bus type classes and functions.
 
+Glossary:
+
+- a byte = 8 bits
+- a nibble = 4 bits
+- a BCD = a "Binary-Coded Decimal".
+
+The standard IEC 870-5-4 defines the following data types for usage inside the application
+layer:
+
+- Type A = Unsigned Integer BCD;
+- Type B = Binary Integer;
+- Type C = Unsigned Integer;
+- Type D = Boolean (can be a subtype of Integer);
+- Type E = Compound CP16 -> types and units information;
+- Type F = Compound CP32 -> date and time;
+- Type G = Compound CP16 -> date;
+
+
+Type A, or Unsigned Integer BCD -> 1 or more bytes.
+Decoded per nibbles (4 bits).
+
+Type B, or Signed Binary Integer -> 1 or more bytes.
+The most significant bit (MSB) of the last byte denotes the sign (S):
+if S is 0 (zero), the number is positive,
+otherwise, the rest bits are negative values in two's complement.
+
+Type C, or Unsigned Integer -> 1 or more bytes.
+Computed as a unit of concatenated bytes.
+
+Type D, or Boolean -> 1 or more bytes.
+The boolean of a unit of concatenated bytes.
+
+Type E, or Compound CP16 (types and units information) -> 2 bytes.
+
+Type F = Compound CP32: Date and Time -> 4 bytes.
+
+Type G, or Compound CP16: Date -> 2 bytes.
+"""
+
+from collections.abc import Iterable, Iterator
 from datetime import date, datetime, time
-from typing import Iterable, Self
+from typing import Self
+
+from aiombus.constants import BIG_ENDIAN, BYTE, NIBBLE
+from aiombus.exceptions import MBusError
+
+# TODO: type A, type H
+# TODO: a unified integer type: as_uint, as_bcd etc.
+
+BytesType = bytes | bytearray | Iterable[int]
+
+
+## Integer types section
+
+
+def parse_binary_integer(ibytes: BytesType) -> int:
+    """Returns the signed binary integer from `bytez`.
+
+    The "Binary Integer" type = "Type B".
+    The bytes are parsed along the Big endian order.
+
+    Parameters
+    ----------
+    ibytes: bytes | bytearray
+        the sequence of bytes for "Type B" parsing
+
+    Raises
+    ------
+    MBusDecodeError
+        if an empty byte sequence is given
+
+    Returns
+    -------
+    int
+    """
+
+    _bytes = bytes(reversed(ibytes))
+    if not _bytes:
+        msg = "cannot parse empty bytes"
+        raise MBusError(msg)
+
+    # the sequence is reversed, the last got the first
+    neg_sign = _bytes[0] & 0x80
+    value = 0
+
+    for byte in _bytes:
+        value = value << BYTE
+
+        if neg_sign:
+            value += byte ^ 0xFF  # two's compliment
+        else:
+            value += byte
+
+    if neg_sign:
+        value = (-value) - 1  # two's compliment
+
+    return value
+
+
+def parse_unsigned_integer(ibytes: BytesType) -> int:
+    """Returns the unsigned integer from `bytez`.
+
+    The "Unsigned Integer" type = "Type C".
+    The bytes are parsed along the Big endian order.
+
+    Parameters
+    ----------
+    ibytes: bytes | bytearray
+        the sequence of bytes for "Type C" parsing
+
+    Raises
+    ------
+    MBusDecodeError
+        if an empty byte sequence is given
+
+    Returns
+    -------
+    int
+    """
+
+    _bytes = bytes(ibytes)
+    if not _bytes:
+        msg = "cannot parse empty bytes"
+        raise MBusError(msg)
+
+    return int.from_bytes(_bytes, byteorder=BIG_ENDIAN, signed=False)
+
+
+def parse_boolean(ibytes: BytesType) -> bool:
+    """Returns the boolean value from `bytez`.
+
+    The "Boolean" type = "Type D".
+    The bytes are parsed along the Big endian order.
+
+    Parameters
+    ----------
+    ibytes: bytes | bytearray
+        the sequence of bytes for "Type D" parsing
+
+    Raises
+    ------
+    MBusDecodeError
+        if an empty byte sequence is given
+
+    Returns
+    -------
+    bool
+    """
+
+    return bool(parse_unsigned_integer(ibytes))
+
+
+## date, time and datetime types section
 
 
 YEAR_MASK_LSB = 0xE0
@@ -14,10 +165,7 @@ MINUTE_MASK = 0x3F
 SECOND_MASK = 0x3F
 
 
-## auxiliary entities
-
-
-## Date section
+### Date section
 
 
 def get_year(lsp: int, msp: int) -> int:
@@ -27,7 +175,7 @@ def get_year(lsp: int, msp: int) -> int:
     year_msp = msp & YEAR_MASK_MSB
 
     # concatenating MS and LS parts
-    year = (year_msp | (year_lsp >> 4)) >> 1
+    year = (year_msp | (year_lsp >> NIBBLE)) >> 1
 
     if year < 81:
         return 2000 + year
@@ -46,8 +194,10 @@ def get_day(byte: int) -> int:
     return byte & DAY_MASK
 
 
-def get_date(frame: bytearray) -> date:
+def get_date(ibytes: BytesType) -> date:
     """Return the Python date from a binary frame."""
+
+    frame = bytes(ibytes)
 
     dt0 = frame[0]
     dt1 = frame[1]
@@ -57,6 +207,25 @@ def get_date(frame: bytearray) -> date:
         month=get_month(byte=dt1),
         day=get_day(byte=dt0),
     )
+
+
+def parse_date(frame: Iterator[int]) -> date:
+    """Return the Python date from a byte iterator.
+
+    Parameters
+    ----------
+    frame: Iterator[int]
+        a frame of bytes for date parsing
+
+    Returns
+    -------
+    date
+    """
+
+    it = iter(frame)
+    lst = [next(it) for _ in range(2)]
+
+    return get_date(bytearray(lst))
 
 
 class Date:
@@ -144,8 +313,10 @@ def get_second(byte: int) -> int:
     return byte & SECOND_MASK
 
 
-def get_time(frame: bytearray) -> time:
+def get_time(ibytes: BytesType) -> time:
     """Return the Python time from a binary frame."""
+
+    frame = bytes(ibytes)
 
     dt0 = frame[0]
     dt1 = frame[1]
@@ -164,10 +335,40 @@ def get_time(frame: bytearray) -> time:
     )
 
 
+def parse_time(frame: Iterator[int]) -> time:
+    """Return the Python time from a byte iterator.
+
+    Parameters
+    ----------
+    frame: Iterator[int]
+        a frame of bytes for time parsing
+
+    Returns
+    -------
+    time
+    """
+
+    it = iter(frame)
+    lst = [next(it) for _ in range(2)]
+
+    sec_byte: None | int = None
+    try:
+        sec_byte = next(it)
+        next(it)
+        sec_byte = next(it)
+    except StopIteration:
+        pass
+
+    if sec_byte:
+        lst += [sec_byte]
+
+    return get_time(bytearray(lst))
+
+
 class Time:
     """Time class.
 
-    Not a art of Meter-Bus standard types.
+    Not a part of the Meter-Bus defined types.
     A custom type to facilitate time operations.
     """
 
@@ -183,18 +384,24 @@ class Time:
 
     @classmethod
     def from_bytearray(cls, frame: bytearray) -> Self:
+        """Return a `Time` from an array of bytes."""
+
         time_ = get_time(frame)
         return cls.from_time(time_)
 
     @classmethod
     def from_hexstring(cls, hex: str) -> Self:
+        """Return a `Time` from a hexadecimal string."""
+
         barr = bytearray.fromhex(hex)
         return cls.from_bytearray(barr)
 
     @classmethod
-    def from_integers(cls, ints: Iterable[int]) -> Self:
-        barr = bytearray(iter(ints))
-        return cls.from_bytearray(barr)
+    def from_integers(cls, it: Iterable[int]) -> Self:
+        """Return a `Time` from an iterable of integers."""
+
+        time_ = parse_time(iter(it))
+        return cls.from_time(time_)
 
     def __init__(self, hour: int, minute: int, second: int = 0):
         self._time = time(hour=hour, minute=minute, second=second)
@@ -240,11 +447,13 @@ class Time:
         return self._sep.join(fmt.split(self._sep)[:3])
 
 
-## DateTime section
+### DateTime section
 
 
-def get_datetime(frame: bytearray) -> datetime:
+def get_datetime(ibytes: BytesType) -> datetime:
     """Return the Python datetime from a binary frame."""
+
+    frame = bytes(ibytes)
 
     dt0 = frame[0]
     dt1 = frame[1]
@@ -263,6 +472,30 @@ def get_datetime(frame: bytearray) -> datetime:
         minute=get_minute(dt0),
         second=get_second(dt4),
     )
+
+
+def parse_datetime(frame: Iterator[int]) -> datetime:
+    """Return the Python datetime from a byte iterator.
+
+    Parameters
+    ----------
+    frame: Iterator[int]
+        a frame of bytes for datetime parsing
+
+    Returns
+    -------
+    datetime
+    """
+
+    it = iter(frame)
+    lst = [next(it) for _ in range(4)]
+
+    try:
+        lst += [next(it)]
+    except StopIteration:
+        pass
+
+    return get_datetime(bytearray(lst))
 
 
 class DateTime:
@@ -296,11 +529,11 @@ class DateTime:
         return cls.from_bytearray(barr)
 
     @classmethod
-    def from_integers(cls, ints: Iterable[int]) -> Self:
-        """Return a `DateTime` from a sequence of integers."""
+    def from_integers(cls, it: Iterable[int]) -> Self:
+        """Return a `DateTime` from an iterable of integers."""
 
-        barr = bytearray(iter(ints))
-        return cls.from_bytearray(barr)
+        datetime_ = parse_datetime(iter(it))
+        return cls.from_datetime(datetime_)
 
     def __init__(
         self, year: int, month: int, day: int, hour: int, minute: int, second: int = 0

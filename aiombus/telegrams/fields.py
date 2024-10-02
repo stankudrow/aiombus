@@ -1,6 +1,6 @@
 """The Field's module.
 
-A Fields are parts of Telegram Frames.
+A Field can be part of Telegram blocks, frames and other containers.
 """
 
 from aiombus.telegrams.base import TelegramField
@@ -19,7 +19,7 @@ CF_FCB_OR_ACD_MASK = 0x20
 CF_DIRECTION_MASK = 0x40
 
 
-# Frame (telegrams.frames) Fields
+# Frame Fields section
 
 
 class AddressField(TelegramField):
@@ -179,14 +179,20 @@ class ControlField(TelegramField):
         return self._direction == 0
 
 
-# class ControlInformationField:
-#     """The "Control Information (CI) Field" class.
+class ControlInformationField(TelegramField):
+    """The "Control Information (CI) Field" class.
 
-#     It was included in the telegram format used, in order to distinguish
-#     between the formats of the long and the control frames.
-#     The control information allows the implementation of a variety of actions
-#     in the master or the slaves.
-#     """
+    The CI-Field codes the type and sequence of application data to be transmitted in this frame.
+    The EN1434-3 defines two possible data sequences in multibyte records.
+    The bit two (counting begins with bit 0, value 4),
+    which is called M bit or Mode bit, in the CI field gives
+    an information about the used byte sequence in multibyte data structures.
+    If the Mode bit is not set (Mode 1),
+    the least significant byte of a multibyte record is transmitted first,
+    otherwise (Mode 2) the most significant byte.
+
+    The Usergroup recommends to use only the Mode 1 in future applications.
+    """
 
 
 ### Data Information Fields section.
@@ -229,7 +235,7 @@ class DataInformationField(TelegramField):
         return self._sn_lsb
 
     @property
-    def extension_bit(self) -> int:
+    def extension(self) -> int:
         return self._ext
 
 
@@ -270,7 +276,7 @@ class DataInformationFieldExtension(TelegramField):
         return self._device_unit
 
     @property
-    def extension_bit(self) -> int:
+    def extension(self) -> int:
         return self._ext
 
 
@@ -283,12 +289,12 @@ class ValueInformationField(TelegramField):
     The structure of the VIF:
     --------------------------------------------------
     |  bit |     7     |     6  5  4  3  2  1  0     |
-    +------+-----------+--------------------+--------+
+    +------+-----------+-----------------------------+
     | desc | extension | unit and multiplier (value) |
     --------------------------------------------------
     """
 
-    UNIT_AND_MULTIPLIER_MASK = 0x0F  # 0b0111_1111
+    UNIT_AND_MULTIPLIER_MASK = 0x7F  # 0b0111_1111
     EXTENSION_BIT_MASK = 0x80  # 0b1000_0000
 
     def __init__(self, byte: int):
@@ -298,26 +304,26 @@ class ValueInformationField(TelegramField):
         self._ext = int((byte & self.EXTENSION_BIT_MASK) != 0)
 
     @property
-    def unit_multiplier(self) -> int:
+    def unit(self) -> int:
         return self._data
 
     @property
-    def extension_bit(self) -> int:
+    def extension(self) -> int:
         return self._ext
 
 
-class ValuenformationFieldExtension(TelegramField):
+class ValueInformationFieldExtension(TelegramField):
     """Value Information Field Extension (VIFE) class.
 
     The structure of the VIFE (the same as VIF):
     --------------------------------------------------
     |  bit |     7     |     6  5  4  3  2  1  0     |
-    +------+-----------+--------------------+--------+
+    +------+-----------+-----------------------------+
     | desc | extension | unit and multiplier (value) |
     --------------------------------------------------
     """
 
-    UNIT_AND_MULTIPLIER_MASK = 0x0F  # 0b0111_1111
+    UNIT_AND_MULTIPLIER_MASK = 0x7F  # 0b0111_1111
     EXTENSION_BIT_MASK = 0x80  # 0b1000_0000
 
     def __init__(self, byte: int):
@@ -327,9 +333,9 @@ class ValuenformationFieldExtension(TelegramField):
         self._ext = int((byte & self.EXTENSION_BIT_MASK) != 0)
 
     @property
-    def unit_multiplier(self) -> int:
+    def unit(self) -> int:
         return self._data
 
     @property
-    def extension_bit(self) -> int:
+    def extension(self) -> int:
         return self._ext

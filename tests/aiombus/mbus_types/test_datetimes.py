@@ -1,10 +1,9 @@
-from contextlib import nullcontext as does_not_raise
+from contextlib import AbstractContextManager, nullcontext as does_not_raise
 from datetime import date, datetime, time
-from typing import ContextManager
 
 import pytest
 
-from aiombus.types.datetimes import Date, DateTime, Time
+from aiombus.types import Date, DateTime, Time
 
 
 ### date section
@@ -20,7 +19,9 @@ from aiombus.types.datetimes import Date, DateTime, Time
         (1, 1, 1, does_not_raise()),
     ],
 )
-def test_date_init(year: int, month: int, day: None | int, expectation: ContextManager):
+def test_date_init(
+    year: int, month: int, day: None | int, expectation: AbstractContextManager
+):
     with expectation:
         date_ = Date(year=year, month=month, day=day)
 
@@ -102,7 +103,7 @@ def test_date_to_iso():
     ],
 )
 def test_time_init(
-    hour: int, minute: int, second: None | int, expectation: ContextManager
+    hour: int, minute: int, second: None | int, expectation: AbstractContextManager
 ):
     with expectation:
         if second is None:

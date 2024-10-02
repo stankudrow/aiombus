@@ -2,7 +2,7 @@ from enum import IntEnum
 
 
 class MeasuredMedium(IntEnum):
-    """Measured Medium Fixed Structure
+    """The table (enum) for media.
 
     1. Record Medium/Unit is always least significant byte first.
     2. H.C.A. = Heat Cost Allocator.
@@ -63,53 +63,53 @@ class PhysicalUnits(IntEnum):
     GJ_times_10 = 0x12  # Giga Joule * 10
     GJ_times_100 = 0x13  # Giga Joule * 100
 
-    W = 0x14  # Watt
-    W_times_10 = 0x15  # Watt * 10
-    W_times_100 = 0x16  # Watt * 100
+    watt = 0x14
+    watt_times_10 = 0x15
+    watt_times_100 = 0x16
 
-    kW = 0x17  # kilo Watt
-    kW_times_10 = 0x18  # kilo Watt * 10
-    kW_times100 = 0x19  # kilo Watt * 100
+    kilo_watt = 0x17
+    kilo_watt_times_10 = 0x18
+    kilo_watt_times_100 = 0x19
 
-    MW = 0x1A  # Mega Watt
-    MW_times_10 = 0x1B  # Mega Watt * 10
-    MW_times_100 = 0x1C  # Mega Watt * 100
+    mega_watt = 0x1A
+    mega_watt_times_10 = 0x1B
+    mega_watt_times_100 = 0x1C
 
-    kJ_per_h = 0x1D  # kilo Joule per hour
-    kJ_per_h_times_10 = 0x1E  # kilo Joule per hour
-    kJ_per_h_times_100 = 0x1F  # kilo Joule per hour
+    kilo_joule_per_hour = 0x1D
+    kilo_joule_per_hour_times_10 = 0x1E
+    kilo_joule_per_hour_times_100 = 0x1F
 
-    MJ_per_h = 0x20  # Mega Joule per hour
-    MJ_per_h_times_10 = 0x21  # Mega Joule per hour
-    MJ_per_h_times_100 = 0x22  # Mega Joule per hour
-    GJ_per_h = 0x23  # Giga Joule per hour
+    mega_joule_per_hour = 0x20
+    mega_joule_per_hour_times_10 = 0x21
+    mega_joule_per_hour_times_100 = 0x22
 
-    GJ_per_h_times_10 = 0x24  # Giga Joule per hour
-    GJ_per_h_times_100 = 0x25  # Giga Joule per hour
+    giga_joule_per_hour = 0x23
+    giga_joule_per_hour_times_10 = 0x24
+    giga_joule_per_hour_times_100 = 0x25
 
-    ml = 0x26  # milli liter
-    ml_times_10 = 0x27  # milli liter
-    ml_times_100 = 0x28  # milli liter
+    milli_liter = 0x26
+    milli_liter_times_10 = 0x27
+    milli_liter_times_100 = 0x28
 
-    l = 0x29  # liter
-    l_times_10 = 0x2A  # liter * 10
-    l_times_100 = 0x2B  # liter * 100
+    liter = 0x29
+    liter_times_10 = 0x2A
+    liter_times_100 = 0x2B
 
-    m_cubic = 0x2C  # meter cubic
-    m_cubic_times_10 = 0x2D  # meter cubic * 10
-    m_cubic_times_100 = 0x2E  # meter cubic * 100
+    meter_cubic = 0x2C
+    meter_cubic_times_10 = 0x2D
+    meter_cubic_times_100 = 0x2E
 
-    ml_per_h = 0x2F  # milli liter per hour
-    ml_per_h_times_10 = 0x30  # milli liter per hour * 10
-    ml_per_h_times_100 = 0x31  # milli liter per hour * 100
+    milli_liter_per_hour = 0x2F
+    milli_liter_per_hour_times_10 = 0x30
+    milli_liter_per_hour_times_100 = 0x31
 
-    l_per_h = 0x32  # liter per hour
-    l_per_h_times_10 = 0x33  # liter per hour * 10
-    l_per_h_times_100 = 0x34  # liter per hour * 100
+    liter_per_hour = 0x32
+    liter_per_hour_times_10 = 0x33
+    liter_per_hour_times_100 = 0x34
 
-    m_cubic_per_h = 0x35  # meter cubic per hour
-    m_cubic_per_h_times_10 = 0x36  # meter cubic per hour * 10
-    m_cubic_per_h_times_100 = 0x37  # meter cubic per hour * 100
+    meter_cubic_per_h = 0x35
+    meter_cubic_per_h_times_10 = 0x36
+    meter_cubic_per_h_times_100 = 0x37
 
     celsius_times_10_to_minus3 = 0x38  # Celsius * 10^(-3)
 

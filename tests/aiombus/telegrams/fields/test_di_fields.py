@@ -7,7 +7,7 @@ from aiombus.telegrams.fields import (
     DataInformationField as DIF,
     DataInformationFieldExtension as DIFE,
 )
-from aiombus.exceptions import MBusValidationError
+from aiombus.exceptions import MBusError
 
 
 ### the DIF section
@@ -16,10 +16,10 @@ from aiombus.exceptions import MBusValidationError
 @pytest.mark.parametrize(
     ("byte", "expectation"),
     [
-        (-1, pytest.raises(MBusValidationError)),
+        (-1, pytest.raises(MBusError)),
         (0, does_not_raise()),
         (255, does_not_raise()),
-        (256, pytest.raises(MBusValidationError)),
+        (256, pytest.raises(MBusError)),
     ],
 )
 def test_dif_init(byte: int, expectation: ContextManager):
@@ -44,7 +44,7 @@ def test_dif_repr():
 def test_dif_extension_bit(byte: int, ext_bit: int):
     dif = DIF(byte=byte)
 
-    assert dif.extension_bit == ext_bit
+    assert dif.extension == ext_bit
 
 
 @pytest.mark.parametrize(
@@ -96,10 +96,10 @@ def test_dif_data_field(byte: int, data_field: int):
 @pytest.mark.parametrize(
     ("byte", "expectation"),
     [
-        (-1, pytest.raises(MBusValidationError)),
+        (-1, pytest.raises(MBusError)),
         (0, does_not_raise()),
         (255, does_not_raise()),
-        (256, pytest.raises(MBusValidationError)),
+        (256, pytest.raises(MBusError)),
     ],
 )
 def test_dife_init(byte: int, expectation: ContextManager):
@@ -124,7 +124,7 @@ def test_dife_repr():
 def test_dife_extension_bit(byte: int, ext_bit: int):
     dif = DIFE(byte=byte)
 
-    assert dif.extension_bit == ext_bit
+    assert dif.extension == ext_bit
 
 
 @pytest.mark.parametrize(

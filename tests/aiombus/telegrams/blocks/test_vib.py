@@ -4,10 +4,10 @@ from typing import ContextManager
 
 import pytest
 
-from aiombus.telegrams.blocks import DataInformationBlock as DIB
+from aiombus.telegrams.blocks import ValueInformationBlock as VIB
 from aiombus.telegrams.fields import (
-    DataInformationField as DIF,
-    DataInformationFieldExtension as DIFE,
+    ValueInformationField as VIF,
+    ValueInformationFieldExtension as VIFE,
 )
 from aiombus.exceptions import MBusError
 
@@ -20,11 +20,11 @@ from aiombus.exceptions import MBusError
         ([0b1000_1111, 0b0111_0000], does_not_raise()),
     ],
 )
-def test_dib_init_from_integers(ints: list[int], expectation: ContextManager):
+def test_vib_init_from_integers(ints: list[int], expectation: ContextManager):
     with expectation:
-        dib = DIB.from_integers(ints)
+        vib = VIB.from_integers(ints)
 
-        assert dib.as_bytes() == bytes(ints)
+        assert vib.as_bytes() == bytes(ints)
 
 
 @pytest.mark.parametrize(
@@ -34,11 +34,11 @@ def test_dib_init_from_integers(ints: list[int], expectation: ContextManager):
         ("8f 70", does_not_raise()),
     ],
 )
-def test_dib_init_from_hexstring(hexstr: str, expectation: ContextManager):
+def test_vib_init_from_hexstring(hexstr: str, expectation: ContextManager):
     with expectation:
-        dib = DIB.from_hexstring(hexstr)
+        vib = VIB.from_hexstring(hexstr)
 
-        assert dib.as_bytes() == bytearray.fromhex(hexstr)
+        assert vib.as_bytes() == bytes.fromhex(hexstr)
 
 
 @pytest.mark.parametrize(
@@ -82,11 +82,11 @@ def test_dib_init_from_hexstring(hexstr: str, expectation: ContextManager):
         ),
     ],
 )
-def test_dib_init(ints: list[int], expectation: ContextManager):
+def test_vib_init(ints: list[int], expectation: ContextManager):
     with expectation:
-        dib = DIB(ints)
+        vib = VIB(ints)
 
-        assert dib.as_bytes() == bytes(ints)
+        assert vib.as_bytes() == bytes(ints)
 
 
 @pytest.mark.parametrize(
@@ -94,21 +94,21 @@ def test_dib_init(ints: list[int], expectation: ContextManager):
     [([0b1000_1111, 0b0111_0000],), ([0b1000_1111, 0b0111_0000],)],
 )
 def test_dib_repr_and_str(it: Iterable):
-    dib = DIB(it)
+    vib = VIB(it)
 
-    fields = dib.fields
-    repstr = f"DataInformationBlock(fields={fields})"
+    fields = vib.fields
+    repstr = f"ValueInformationBlock(fields={fields})"
 
     difes = it[1:] if len(it) > 1 else []
-    strstr = str([DIF(it[0])] + [DIFE(bt) for bt in difes])
+    strstr = str([VIF(it[0])] + [VIFE(bt) for bt in difes])
 
-    assert repr(dib) == repstr
-    assert str(dib) == strstr
+    assert repr(vib) == repstr
+    assert str(vib) == strstr
 
 
-def test_for_loop_over_dib():
+def test_for_loop_over_vib():
     it = [0b1000_0000, 0b1000_0001, 0b0111_0010]
-    dib = DIB(it)
+    dib = VIB(it)
 
     for df, byte in zip(dib, it):
         assert df.byte == byte
