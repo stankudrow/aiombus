@@ -3,7 +3,7 @@ from typing import ContextManager
 
 import pytest
 
-from aiombus.telegrams.fields import (
+from aiombus.telegrams.fields.value_info import (
     ValueInformationField as VIF,
     ValueInformationFieldExtension as VIFE,
 )

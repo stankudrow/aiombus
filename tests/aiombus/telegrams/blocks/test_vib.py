@@ -4,8 +4,8 @@ from typing import ContextManager
 
 import pytest
 
-from aiombus.telegrams.blocks import ValueInformationBlock as VIB
-from aiombus.telegrams.fields import (
+from aiombus.telegrams.blocks.value_info import ValueInformationBlock as VIB
+from aiombus.telegrams.fields.value_info import (
     ValueInformationField as VIF,
     ValueInformationFieldExtension as VIFE,
 )

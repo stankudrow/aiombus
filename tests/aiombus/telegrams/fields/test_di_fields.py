@@ -3,7 +3,7 @@ from typing import ContextManager
 
 import pytest
 
-from aiombus.telegrams.fields import (
+from aiombus.telegrams.fields.data_info import (
     DataInformationField as DIF,
     DataInformationFieldExtension as DIFE,
 )

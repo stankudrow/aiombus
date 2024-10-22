@@ -4,8 +4,8 @@ from typing import ContextManager
 
 import pytest
 
-from aiombus.telegrams.blocks import DataInformationBlock as DIB
-from aiombus.telegrams.fields import (
+from aiombus.telegrams.blocks.data_info import DataInformationBlock as DIB
+from aiombus.telegrams.fields.data_info import (
     DataInformationField as DIF,
     DataInformationFieldExtension as DIFE,
 )

@@ -34,34 +34,34 @@ class MeasuredMedium(IntEnum):
 
 
 class PhysicalUnits(IntEnum):
-    """The table (enum) of physical units."""
+    """The table of physical units."""
 
-    hms = 0x00  # hours, minutes, seconds
-    dmy = 0x01  # days, months, years
+    hour_minute_second = 0x00
+    day_month_year = 0x01
 
-    Wh = 0x02  # Watt-hour
-    Wh_times_10 = 0x03  # Watt-hour * 10
-    Wh_times_100 = 0x04  # Watt-hour * 100
+    watt_hour = 0x02
+    watt_hour_times_10 = 0x03
+    watt_hour_times_100 = 0x04
 
-    kWh = 0x05  # kilo Watt-hour
-    kWh_times_10 = 0x06  # kilo Watt-hour * 10
-    kWh_times_100 = 0x07  # kilo Watt-hour * 100
+    kilo_watt_hour = 0x05
+    kilo_watt_hour_times_10 = 0x06
+    kilo_watt_hour_times_100 = 0x07
 
-    MWh = 0x08  # Mega Watt-hour
-    MWh_times_10 = 0x09  # Mega Watt-hour * 10
-    MWh_times_100 = 0x0A  # Mega Watt-hour * 100
+    mega_watt_hour = 0x08
+    mega_watt_hour_times_10 = 0x09
+    mega_watt_hour_times_100 = 0x0A
 
-    kJ = 0x0B  # kilo Joule
-    kJ_times_10 = 0x0C  # kilo Joule * 10
-    kJ_times_100 = 0x0D  # kilo Joule * 100
+    kilo_joule = 0x0B
+    kilo_joule_times_10 = 0x0C
+    kilo_joule_times_100 = 0x0D
 
-    MJ = 0x0E  # Mega Joule
-    MJ_times_10 = 0x0F  # Mega Joule * 10
-    MJ_times_100 = 0x10  # Mega Joule * 100
+    mega_joule = 0x0E
+    mega_joule_times_10 = 0x0F
+    mega_joule_times_100 = 0x10
 
-    GJ = 0x11  # Giga Joule
-    GJ_times_10 = 0x12  # Giga Joule * 10
-    GJ_times_100 = 0x13  # Giga Joule * 100
+    giga_joule = 0x11
+    giga_joule_times_10 = 0x12
+    giga_joule_times_100 = 0x13
 
     watt = 0x14
     watt_times_10 = 0x15
@@ -111,7 +111,7 @@ class PhysicalUnits(IntEnum):
     meter_cubic_per_h_times_10 = 0x36
     meter_cubic_per_h_times_100 = 0x37
 
-    celsius_times_10_to_minus3 = 0x38  # Celsius * 10^(-3)
+    celsius_times_10_to_minus_3 = 0x38  # Celsius * 10^(-3)
 
     units_for_hca = 0x39  # H.C.A. = Heat Cost Allocator
 

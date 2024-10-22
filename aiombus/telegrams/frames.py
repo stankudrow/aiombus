@@ -13,13 +13,15 @@ from collections.abc import Iterator
 from typing import Self
 
 from aiombus.exceptions import MBusError
-from aiombus.telegrams.fields import (
+from aiombus.telegrams.base import (
+    TelegramBytesType,
+    TelegramContainer,
     TelegramField,
-    AddressField,
-    ControlField,
-    ControlInformationField,
+    parse_byte,
 )
-from aiombus.telegrams.base import TelegramBytesType, TelegramContainer, parse_byte
+from aiombus.telegrams.fields.address import AddressField
+from aiombus.telegrams.fields.control import ControlField
+from aiombus.telegrams.fields.control_info import ControlInformationField
 
 
 ACK_BYTE = 0xE5

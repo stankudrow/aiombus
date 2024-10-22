@@ -4,7 +4,7 @@ from typing import ContextManager
 import pytest
 
 from aiombus.exceptions import MBusError
-from aiombus.telegrams.fields import (
+from aiombus.telegrams.fields.control import (
     ControlField,
 )
 

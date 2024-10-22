@@ -4,7 +4,7 @@ from typing import ContextManager
 import pytest
 
 from aiombus.exceptions import MBusError
-from aiombus.telegrams.fields import (
+from aiombus.telegrams.fields.address import (
     AddressField,
     AF_UNCONFIGURED_SLAVE_BYTE,
     AF_SLAVE_MAX_RANGE_VALUE_BYTE,

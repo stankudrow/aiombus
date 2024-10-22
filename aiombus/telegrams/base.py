@@ -135,3 +135,7 @@ class TelegramContainer:
 
     def as_bytes(self) -> bytes:
         return bytes(field.byte for field in self.fields)
+
+
+class TelegramBlock(TelegramContainer):
+    """Base Telegram Block class."""
